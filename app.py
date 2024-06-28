@@ -213,11 +213,11 @@ def main():
                 "Bullet Point Length": lambda: bullet_point_length(st.session_state.structured_data["Description"]),
                 "Bullet Points Improver": lambda: bullet_points_improver("\n".join(st.session_state.structured_data["Description"])),
                 "Total Bullet Points": lambda: total_bullet_list(st.session_state.structured_data["Description"]),
+                "Verb Tense Checker": lambda: verb_tense("\n".join(st.session_state.structured_data["Description"])),
                 "Weak Verb Checker": lambda: weak_verb_checker("\n".join(st.session_state.structured_data["Description"])),
                 "Section Checker": lambda: section_checker(st.session_state.structured_data["Sections"]),
                 "Skill Checker": lambda: skill_checker(st.session_state.structured_data["Skills"]["HARD"], st.session_state.structured_data["Skills"]["SOFT"]),
                 "Repetition Checker": lambda: repetition("\n".join(st.session_state.structured_data["Description"])),
-                "Verb Tense Checker": lambda: verb_tense("\n".join(st.session_state.structured_data["Description"])),
                 "Responsibility In Words Checker": lambda: reponsibility("\n".join(st.session_state.structured_data["Description"])),
                 "Spelling Checker": lambda: spelling_checker("\n".join(st.session_state.structured_data["Description"]))
             }
