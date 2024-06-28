@@ -171,6 +171,11 @@ def main():
     
     st.title("Resume Analyzer")
     uploaded_file = st.file_uploader("Upload your CV (PDF)", type="pdf")
+
+    if 'last_uploaded_file' not in st.session_state or (uploaded_file and uploaded_file.name != st.session_state.last_uploaded_file):
+        # Reset session state
+        st.session_state.clear()
+        st.session_state.last_uploaded_file = uploaded_file.name if uploaded_file else None
     
     if uploaded_file:
         pdf_bytes = uploaded_file.getvalue()
@@ -182,9 +187,8 @@ def main():
             existing_doc = client.collection.find_one({'pdf': pdf_bytes})
             if existing_doc:
                 st.session_state.analysis_results = existing_doc.get('analysis_results', {})
-                st.session_state.structured_data = existing_doc.get('structured_results', {})
             else: 
-                client.insert_data({'pdf': pdf_bytes, 'structured_results':{},'analysis_results': {}})
+                client.insert_data({'pdf': pdf_bytes,'analysis_results': {}})
 
         if 'cv_text' not in st.session_state:
             st.session_state.cv_text = extract_text_from_pdf(uploaded_file)
@@ -194,8 +198,6 @@ def main():
 
             if 'structured_data' not in st.session_state:
                 st.session_state.structured_data = extract_structured_data(st.session_state.cv_text)
-                client.update_structured_results(pdf_bytes,st.session_state.structured_data)
-
             
             if 'analysis_results' not in st.session_state:
                 st.session_state.analysis_results = {}
