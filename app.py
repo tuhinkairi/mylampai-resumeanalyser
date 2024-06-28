@@ -2,15 +2,17 @@ import streamlit as st
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from agent import *
-from brevity import *
-from style import *
-from impact import *
+from llm_reviewer.agent import *
+from llm_reviewer.brevity import *
+from llm_reviewer.style import *
+from llm_reviewer.impact import *
 import tempfile
-from utils import *
+from utils.utils import *
 import base64
 import streamlit as st
 from streamlit_pdf_viewer import pdf_viewer
+from streamlit_utils.custom_background import Background
+
 
 
 colour_dict = {
@@ -42,6 +44,10 @@ def show_pdf_from_bytes(pdf_bytes):
 
 
 def main():
+    bacground_img = Background()
+    
+    st.markdown(bacground_img.background_img_md(), unsafe_allow_html=True)
+    
     st.title("Resume Analyzer")
     uploaded_file = st.file_uploader("Upload your CV (PDF)", type="pdf")
 

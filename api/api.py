@@ -9,11 +9,11 @@ import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import PyPDF2
 import io
-from agent import *
+from llm_reviewer.agent import *
 import json
-from brevity import *
-from style import *
-from impact import *
+from llm_reviewer.brevity import *
+from llm_reviewer.style import *
+from llm_reviewer.impact import *
 import fitz
 import tempfile
 from utils import *
