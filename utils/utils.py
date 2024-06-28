@@ -1,6 +1,6 @@
 import streamlit as st
 import PyPDF2
-from agent import *
+from llm_reviewer.agent import *
 import json
 import sys
 import os
