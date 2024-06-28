@@ -12,8 +12,11 @@ import base64
 import streamlit as st
 from streamlit_pdf_viewer import pdf_viewer
 from streamlit_utils.custom_background import Background
+from database.database import Database
+from dotenv import load_dotenv
 
-
+load_dotenv()
+uri = os.getenv('URI')
 
 colour_dict = {
     "green":(0.847, 0.988, 0.882),
@@ -45,13 +48,22 @@ def show_pdf_from_bytes(pdf_bytes):
 
 def main():
     bacground_img = Background()
-    
+    client = Database(uri)
     st.markdown(bacground_img.background_img_md(), unsafe_allow_html=True)
     
     st.title("Resume Analyzer")
     uploaded_file = st.file_uploader("Upload your CV (PDF)", type="pdf")
-
+    
     if uploaded_file:
+        if uploaded_file.size > 5 * 1024 * 1024:  # 5 MB limit in bytes
+            st.error("File size exceeds 5 MB limit. Please upload a smaller PDF.")
+        else:
+            if client.find_one({'pdf': uploaded_file.getvalue()}):
+                pass
+            else:
+                client.insert_data({'pdf': uploaded_file.getvalue()})
+
+        
         if 'cv_text' not in st.session_state:
             st.session_state.cv_text = extract_text_from_pdf(uploaded_file)
         
