@@ -1,0 +1,12 @@
+streamlit
+PyPDF2
+python-dotenv
+google-generativeai
+langchain-google-genai
+langchain
+langchain-community
+langchain-core
+PyMuPDF
+fastapi
+uvicorn
+streamlit-pdf-viewer
