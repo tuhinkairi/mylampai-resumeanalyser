@@ -10,3 +10,4 @@ PyMuPDF
 fastapi
 uvicorn
 streamlit-pdf-viewer
+pymongo
