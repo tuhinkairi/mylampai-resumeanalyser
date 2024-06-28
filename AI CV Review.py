@@ -236,9 +236,6 @@ def main():
                 "Spelling Checker": show_spell_checker
             }
 
-            st.markdown("[Early Access](https://docs.google.com/forms/d/e/1FAIpQLSd1vn8mLB5dXrxsimkfEJCH6-cxX_1gMUGVZDcfxM5eSYrrbA/viewform?usp=sf_link)")
-            st.markdown("[Feedback](https://forms.gle/eAUHd2GpyRiZqvry9)")
-
             for analysis_name, analysis_function in analysis_functions.items():
                 if st.sidebar.button(analysis_name):
                     if analysis_name not in st.session_state.analysis_results:
@@ -269,6 +266,11 @@ def main():
                     else:
                         st.subheader("Everything Looks Pretty Good in This Section, Perfect!")
                         show_pdf_from_bytes(uploaded_file.getvalue())
+
+                        
+            st.markdown("[Early Access](https://docs.google.com/forms/d/e/1FAIpQLSd1vn8mLB5dXrxsimkfEJCH6-cxX_1gMUGVZDcfxM5eSYrrbA/viewform?usp=sf_link)")
+            st.markdown("[Feedback](https://forms.gle/eAUHd2GpyRiZqvry9)")
+
 
 def generate_highlighted_pdf(analysis_name, result, uploaded_file):
     if analysis_name == "Quantification Checker":
