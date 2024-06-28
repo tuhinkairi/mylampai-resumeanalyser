@@ -6,14 +6,14 @@ from llm_reviewer.agent import *
 from llm_reviewer.brevity import *
 from llm_reviewer.style import *
 from llm_reviewer.impact import *
-import tempfile
 from utils.utils import *
-import base64
 import streamlit as st
 from streamlit_pdf_viewer import pdf_viewer
 from streamlit_utils.custom_background import Background
 from database.database import Database
 from dotenv import load_dotenv
+from streamlit import session_state as ss
+
 
 load_dotenv()
 uri = os.getenv('URI')
@@ -25,27 +25,9 @@ colour_dict = {
     "yellow":(1, 0.894, 0.698)
 }
 
-
-
-def show_pdf(file_path):
-    with open(file_path,"rb") as f:
-        base64_pdf = base64.b64encode(f.read()).decode('utf-8')
-    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="800" height="800" type="application/pdf"></iframe>'
-    st.markdown(pdf_display, unsafe_allow_html=True)
-
-def get_path(uploaded_file):
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
-        temp_file.write(uploaded_file.getvalue())
-        temp_file_path = temp_file.name
-    return temp_file_path
-
 def show_pdf_from_bytes(pdf_bytes):
     pdf_viewer(pdf_bytes,render_text=True)
-    # base64_pdf = base64.b64encode(pdf_bytes.getvalue()).decode('utf-8')
-    # pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="800" height="800" type="application/pdf"></iframe>'
-    # st.markdown(pdf_display, unsafe_allow_html=True)
-
-
+    
 def main():
     bacground_img = Background()
     client = Database(uri)
@@ -55,13 +37,18 @@ def main():
     uploaded_file = st.file_uploader("Upload your CV (PDF)", type="pdf")
     
     if uploaded_file:
+        pdf_bytes = uploaded_file.getvalue()
+
         if uploaded_file.size > 5 * 1024 * 1024:  # 5 MB limit in bytes
             st.error("File size exceeds 5 MB limit. Please upload a smaller PDF.")
+        
         else:
-            if client.find_one({'pdf': uploaded_file.getvalue()}):
-                pass
-            else:
-                client.insert_data({'pdf': uploaded_file.getvalue()})
+            existing_doc = client.collection.find_one({'pdf': pdf_bytes})
+            if existing_doc:
+                st.session_state.analysis_results = existing_doc.get('analysis_results', {})
+                st.session_state.structured_data = existing_doc.get('structured_results', {})
+            else: 
+                client.insert_data({'pdf': pdf_bytes, 'structured_results':{},'analysis_results': {}})
 
         
         if 'cv_text' not in st.session_state:
@@ -72,6 +59,8 @@ def main():
             
             if 'structured_data' not in st.session_state:
                 st.session_state.structured_data = extract_structured_data(st.session_state.cv_text)
+                client.update_structured_results(pdf_bytes,st.session_state.structured_data)
+
             
             if 'analysis_results' not in st.session_state:
                 st.session_state.analysis_results = {}
@@ -123,6 +112,7 @@ def main():
                     if analysis_name not in st.session_state.analysis_results:
                         result = perform_analysis(analysis_name, analysis_function)
                         st.session_state.analysis_results[analysis_name] = result
+                        client.update_analysis_results(pdf_bytes, st.session_state.analysis_results)
                     else:
                         result = st.session_state.analysis_results[analysis_name]
 
@@ -148,6 +138,7 @@ def main():
                     else:
                         st.subheader("Everything Looks Pretty Good in This Section, Perfect!")
                         show_pdf_from_bytes(uploaded_file.getvalue())
+        
 
 def generate_highlighted_pdf(analysis_name, result, uploaded_file):
     if analysis_name == "Quantification Checker":

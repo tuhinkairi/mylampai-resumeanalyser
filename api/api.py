@@ -1,22 +1,16 @@
 from fastapi import FastAPI, UploadFile, File
 from pydantic import BaseModel
 from typing import List, Dict, Any
-import PyPDF2
 import io
-import streamlit as st
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-import PyPDF2
 import io
 from llm_reviewer.agent import *
-import json
 from llm_reviewer.brevity import *
 from llm_reviewer.style import *
 from llm_reviewer.impact import *
-import fitz
-import tempfile
-from utils import *
+from utils.utils import *
 app = FastAPI()
 
 @app.get("/")
