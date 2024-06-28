@@ -1,29 +1,144 @@
 import streamlit as st
 import sys
 import os
+import tempfile
+import base64
+from streamlit_pdf_viewer import pdf_viewer
+
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from agent import *
 from brevity import *
 from style import *
 from impact import *
-import tempfile
 from utils import *
-import base64
-import streamlit as st
-from streamlit_pdf_viewer import pdf_viewer
-
 
 colour_dict = {
-    "green":(0.847, 0.988, 0.882),
-    "blue":(0.725, 0.71, 0.988),
-    "red":(1, 0.698, 0.698),
-    "yellow":(1, 0.894, 0.698)
+    "green": (0.847, 0.988, 0.882),
+    "blue": (0.725, 0.71, 0.988),
+    "red": (1, 0.698, 0.698),
+    "yellow": (1, 0.894, 0.698)
 }
 
+def inject_css():
+    css = """
+    <style>
+    
+    h1, h2, h3, h4 {
+        color: #8c52ff;
+    }
+    .main p {
+        color: #000000aa;
+    }
+
+    .main .e1e4pi9i0 p {
+        color: white;
+    }
+
+    .stApp {
+        background: #F1EAFF;
+        color: #000000
+    }
+    #stDecoration {
+        display: none;
+    }
+    .eczjsme18 {
+        background: #f5f5f540;
+        backdrop-filter: blur(10px);
+        color: white;
+        box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.1);
+    }
+    .e1nzilvr4 h2 {
+        color: #8c52ff;
+        text-transform: uppercase;
+        text-align: center;
+        font-size: 1.5em;
+    }
+    .st-emotion-cache-h4xjwg {
+        background: #f1eaff;
+        color: #f1eaff;
+        position: relative;
+    }
+    .st-emotion-cache-mnu3yk.ef3psqc5 {
+        opacity: 0;
+        display: none;
+    }
+    .st-emotion-cache-1p1m4ay.e3g6aar0 {
+        display: none;
+    }
+    header::before {
+        content: "";
+        position: absolute;
+        top: 20%;
+        left: 0;
+        width: 150px;
+        height: 60%;
+        background: url('https://main--mylamp-ai.netlify.app/home/logo.svg') no-repeat center;
+        background-size: contain;
+    }
+    .st-emotion-cache-19u4bdk.eczjsme5 .st-emotion-cache-yfhhig.ef3psqc4 {
+        background-color: #8c52ff90 !important;
+        color: white;
+        border-radius: 100px;
+        transform: translateY(calc(50vh - 50%));
+    }
+    .st-emotion-cache-a1dni5.eczjsme18 .st-emotion-cache-yfhhig {
+        background-color: #8c52ff90 !important;
+        color: white;
+    }
+    
+    .st-emotion-cache-1i4v8s7.eczjsme18 .st-emotion-cache-yfhhig {
+        background-color: #8c52ff90 !important;
+        border-radius: 100px;
+        color: white;
+    }
+    .sidebar .sidebar-content {
+        background-color: #F1EAFF;
+    }
+    .e1b2p2ww15 {
+        background-color: #8c52ff;
+        color: white;
+    }
+    .ef3psqc12 {
+        background-color: #8c52ff !important;
+        color: white !important;
+        border: 1px solid rgb(250, 250, 250, 0.2) !important;
+    }
+    .stButton>button {
+        background-color: #8c52ff !important;
+        color: white !important;
+        border: none;
+        padding: 10px 24px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        width: 100%;
+        transition: all 0.15s ease-in-out;
+    }
+    .stButton>button:hover {
+        transform: scale(1.02);
+        color: white;
+    }
+    </style>
+    """
+    st.markdown(css, unsafe_allow_html=True)
+
+
+# def add_logo():
+#     logo_path = "./logo.png"  # Update this with your logo's path
+#     logo_html = f"""
+#     <div class="header">
+#         <img src="data:image/png;base64,{base64.b64encode(open(logo_path, "rb").read()).decode()}" class="logo">
+#         <h1>Resume Analyzer</h1>
+#     </div>
+#     """
+#     st.markdown(logo_html, unsafe_allow_html=True)
 
 
 def show_pdf(file_path):
-    with open(file_path,"rb") as f:
+    with open(file_path, "rb") as f:
         base64_pdf = base64.b64encode(f.read()).decode('utf-8')
     pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="800" height="800" type="application/pdf"></iframe>'
     st.markdown(pdf_display, unsafe_allow_html=True)
@@ -35,32 +150,31 @@ def get_path(uploaded_file):
     return temp_file_path
 
 def show_pdf_from_bytes(pdf_bytes):
-    pdf_viewer(pdf_bytes,render_text=True)
-    # base64_pdf = base64.b64encode(pdf_bytes.getvalue()).decode('utf-8')
-    # pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="800" height="800" type="application/pdf"></iframe>'
-    # st.markdown(pdf_display, unsafe_allow_html=True)
-
+    pdf_viewer(pdf_bytes, render_text=True)
 
 def main():
+    inject_css()
+    # add_logo()
+
     st.title("Resume Analyzer")
     uploaded_file = st.file_uploader("Upload your CV (PDF)", type="pdf")
 
     if uploaded_file:
         if 'cv_text' not in st.session_state:
             st.session_state.cv_text = extract_text_from_pdf(uploaded_file)
-        
+
         if st.session_state.cv_text:
             st.success("CV uploaded successfully!")
-            
+
             if 'structured_data' not in st.session_state:
                 st.session_state.structured_data = extract_structured_data(st.session_state.cv_text)
-            
+
             if 'analysis_results' not in st.session_state:
                 st.session_state.analysis_results = {}
-            
+
             if 'highlighted_pdfs' not in st.session_state:
                 st.session_state.highlighted_pdfs = {}
-            
+
             st.sidebar.header("Analysis Functions")
 
             analysis_functions = {
@@ -111,10 +225,10 @@ def main():
                     if result:
                         if analysis_name in show_dict:
                             show_dict[analysis_name](result)
-                        
+
                         if analysis_name not in pdf_list:
                             show_pdf_from_bytes(uploaded_file.getvalue())
-                        
+
                         if analysis_name in pdf_list:
                             if analysis_name not in st.session_state.highlighted_pdfs:
                                 highlighted_pdf_path = generate_highlighted_pdf(analysis_name, result, uploaded_file)
