@@ -180,7 +180,6 @@ def main():
         
         else:
             existing_doc = client.collection.find_one({'pdf': pdf_bytes})
-            st.header("FOUND YA")
             if existing_doc:
                 st.session_state.analysis_results = existing_doc.get('analysis_results', {})
                 st.session_state.structured_data = existing_doc.get('structured_results', {})
@@ -212,7 +211,6 @@ def main():
                 "Bullet Point Length": lambda: bullet_point_length(st.session_state.structured_data["Description"]),
                 "Bullet Points Improver": lambda: bullet_points_improver("\n".join(st.session_state.structured_data["Description"])),
                 "Total Bullet Points": lambda: total_bullet_list(st.session_state.structured_data["Description"]),
-                "Personal Info": lambda: personal_info(st.session_state.structured_data["Personal Information"]),
                 "Weak Verb Checker": lambda: weak_verb_checker("\n".join(st.session_state.structured_data["Description"])),
                 "Section Checker": lambda: section_checker(st.session_state.structured_data["Sections"]),
                 "Skill Checker": lambda: skill_checker(st.session_state.structured_data["Skills"]["HARD"], st.session_state.structured_data["Skills"]["SOFT"]),
@@ -225,7 +223,7 @@ def main():
             pdf_list = [
                 "Bullet Point Length", "Bullet Points Improver", "Quantification Checker",
                 "Weak Verb Checker", "Repetition Checker", "Verb Tense Checker",
-                "Responsibility In Words Checker", "Personal Info"
+                "Responsibility In Words Checker", 
             ]
 
             show_dict = {
@@ -233,7 +231,6 @@ def main():
                 "Bullet Point Length": show_big_bullet_points,
                 "Total Bullet Points": show_box_brevity,
                 "Bullet Points Improver": show_bullet_point_improver,
-                "Personal Info": show_personal_info,
                 "Section Checker": show_personal_info,
                 "Skill Checker": show_skill_checker,
                 "Repetition Checker": show_repetition,

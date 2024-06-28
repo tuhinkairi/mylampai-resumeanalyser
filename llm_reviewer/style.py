@@ -50,9 +50,11 @@ def section_checker(sections):
 
     Contact Information
     Professional Summary or Objective
-    Work Experience
+    Work Experience or Projects 
     Education
     Skills
+    Extra-curriculars
+    Coursework
     (Optional but often valuable) Achievements or Projects
 
     If you find irrelevant sections or notice missing critical sections, provide your analysis in a JSON format as follows:
