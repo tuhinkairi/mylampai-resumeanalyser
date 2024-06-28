@@ -6,11 +6,6 @@ import base64
 from streamlit_pdf_viewer import pdf_viewer
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from agent import *
-from brevity import *
-from style import *
-from impact import *
-from utils import *
 from llm_reviewer.agent import *
 from llm_reviewer.brevity import *
 from llm_reviewer.style import *
@@ -170,7 +165,6 @@ def show_pdf_from_bytes(pdf_bytes):
 def main():
     inject_css()
     # add_logo()
-
     # bacground_img = Background()
     client = Database(uri)
     # st.markdown(bacground_img.background_img_md(), unsafe_allow_html=True)
