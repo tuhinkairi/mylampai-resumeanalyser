@@ -37,7 +37,7 @@ def quantification(text_to_check):
     - Ordinal numbers (e.g., "1st", "2nd", "third") do NOT qualify for the "Quantify" category.
     - Time periods without specific numeric values (e.g., "annually", "monthly") do NOT qualify for the "Quantify" category.
     - Be extremely strict in your categorization. When in doubt, categorize as "Not Quantify".
-"""
+""".strip()
     bot_quatify = Agent(quantify_prompt)
     bot_quatify_resp = bot_quatify(str(text_to_check))
     json_file = json.loads(bot_quatify_resp.strip().strip("```json").strip("```"))
@@ -75,7 +75,7 @@ def repetition(text_to_check):
     }
     // Additional entries as needed...
     }```
-    """
+    """.strip()
     repeat_bot = Agent(repetition_prompt)
     repeat_bot_resp = repeat_bot(text_to_check)
     json_file = json.loads(repeat_bot_resp.strip().strip("```json").strip("```"))
@@ -148,7 +148,6 @@ def verb_tense(text_to_check):
     verb_tense_prompt = """
     ### CONTEXT ###
     A resume is often the first impression potential employers have of a candidate. Every word matters, and using incorrect verb tenses can make applicants appear unprofessional or careless to hiring managers. Proper tense usage is crucial for presenting a polished and competent image.
-
     ### INSTRUCTIONS ###
     1. Carefully review each line of the provided resume text.
     2. Identify and flag any instances of incorrect verb tense usage that could negatively impact the candidate's perception by employers.
@@ -157,24 +156,21 @@ def verb_tense(text_to_check):
     - Values: An object containing:
         a) "correction": The revised bullet point with correct tense
         b) "reason": A brief explanation of why the change was made
-        c) "impact": How this change improves the overall impression
+        c) "impact": Point Out to Change You made
     4. Repeat steps 1-3 up to 3 times, refining the corrections and explanations each time.
     ### OUTPUT ###
     Provide the final, refined JSON object using the following format:
-
     ```json
     {
-    "Original bullet point with incorrect tense": {
-        "correction": "Revised bullet point with correct tense",
-        "reason": "Explanation of the tense correction",
-        "impact": "How this change enhances the resume's effectiveness"
-    },
-    // Additional entries...
-    }```
-
-    It is also possible to have this empty as there might no be a need for improvement of any tense in any line.
-    """
-
+        "Original bullet point with incorrect tense": {
+            "correction": "Revised bullet point with correct tense",
+            "reason": "Explanation of the tense correction",
+            "impact": "Point Out to Change You made"
+        },
+        // Additional entries...
+    }```    
+""".strip()
+    
     verb_tense_bot = Agent(verb_tense_prompt)
     verb_tense_bot_resp = verb_tense_bot(text_to_check)
     json_file = json.loads(verb_tense_bot_resp.strip().strip("```json").strip("```"))
@@ -187,26 +183,31 @@ def reponsibility(text_to_check):
     responsibility_prompt = """
     ### CONTEXT ###
     Hiring managers seek specific, impactful language in resumes. Many job seekers unknowingly use generic or overused phrases that can negatively impact their candidacy. Additionally, even without these clichés, some bullet points may still benefit from optimization to better showcase a candidate's value.
-
+    
     ### INSTRUCTIONS ###
-    1. Carefully review each line of the provided resume text.
-    2. Identify and flag:
-    a) Instances of generic or overused phrases
-    3. Generate a JSON object with the following structure:
-    - Keys: The original phrase or bullet point
-    - Values: An object containing:
-        a) "correction": Improved phrase or bullet point without altering the overall meaning
-        b) "reason": Brief explanation of the suggested change
+    a.) Carefully review each line of the provided resume text.
+    b.) Identify and flag:
+        i.) Instances of generic or overused phrases
+    c.) Generate a JSON object with the following structure:
+        Keys: The original phrase or bullet point
+        Values: An object containing:
+            i.) "correction": Improved phrase or bullet point without altering the overall meaning
+            ii.) "reason": Brief explanation of the suggested change
+
     ### OUTPUT ###
-    Provide the final, refined JSON object using the following format which starts with '```json' and trails with '```':
+    Provide the final, refined JSON object using the following format starting with '```json' and trailing with '```':
     ```json
     {
-    "Original phrase or bullet point": {
-        "correction": "Improved phrase or bullet point",
-        "reason": "Explanation of the improvement",
+    "Original phrase or bullet point 1": {
+        "correction": "Improved phrase or bullet point 1",
+        "reason": "Explanation of the improvement 1"
     },
-    // Additional entries...
+    "Original phrase or bullet point 2": {
+        "correction": "Improved phrase or bullet point 2",
+        "reason": "Explanation of the improvement 2"
     }
+    }```
+
     """.strip()
     responsibility_prompt_bot = Agent(responsibility_prompt)
     responsibility_prompt_bot_resp = responsibility_prompt_bot(text_to_check)
