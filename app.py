@@ -18,7 +18,6 @@ from database.database import Database
 from dotenv import load_dotenv
 from streamlit import session_state as ss
 
-
 load_dotenv()
 uri = os.getenv('URI')
 
