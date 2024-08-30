@@ -18,7 +18,6 @@ from database.database import Database
 from dotenv import load_dotenv
 from streamlit import session_state as ss
 
-
 load_dotenv()
 uri = os.getenv('URI')
 
@@ -171,6 +170,11 @@ def main():
     
     st.title("Resume Analyzer")
     uploaded_file = st.file_uploader("Upload your CV (PDF)", type="pdf")
+
+    if 'last_uploaded_file' not in st.session_state or (uploaded_file and uploaded_file.name != st.session_state.last_uploaded_file):
+        # Reset session state
+        st.session_state.clear()
+        st.session_state.last_uploaded_file = uploaded_file.name if uploaded_file else None
     
     if uploaded_file:
         pdf_bytes = uploaded_file.getvalue()
@@ -180,12 +184,10 @@ def main():
         
         else:
             existing_doc = client.collection.find_one({'pdf': pdf_bytes})
-            st.header("FOUND YA")
             if existing_doc:
                 st.session_state.analysis_results = existing_doc.get('analysis_results', {})
-                st.session_state.structured_data = existing_doc.get('structured_results', {})
             else: 
-                client.insert_data({'pdf': pdf_bytes, 'structured_results':{},'analysis_results': {}})
+                client.insert_data({'pdf': pdf_bytes,'analysis_results': {}})
 
         if 'cv_text' not in st.session_state:
             st.session_state.cv_text = extract_text_from_pdf(uploaded_file)
@@ -195,8 +197,6 @@ def main():
 
             if 'structured_data' not in st.session_state:
                 st.session_state.structured_data = extract_structured_data(st.session_state.cv_text)
-                client.update_structured_results(pdf_bytes,st.session_state.structured_data)
-
             
             if 'analysis_results' not in st.session_state:
                 st.session_state.analysis_results = {}
@@ -212,12 +212,11 @@ def main():
                 "Bullet Point Length": lambda: bullet_point_length(st.session_state.structured_data["Description"]),
                 "Bullet Points Improver": lambda: bullet_points_improver("\n".join(st.session_state.structured_data["Description"])),
                 "Total Bullet Points": lambda: total_bullet_list(st.session_state.structured_data["Description"]),
-                "Personal Info": lambda: personal_info(st.session_state.structured_data["Personal Information"]),
+                "Verb Tense Checker": lambda: verb_tense("\n".join(st.session_state.structured_data["Description"])),
                 "Weak Verb Checker": lambda: weak_verb_checker("\n".join(st.session_state.structured_data["Description"])),
                 "Section Checker": lambda: section_checker(st.session_state.structured_data["Sections"]),
                 "Skill Checker": lambda: skill_checker(st.session_state.structured_data["Skills"]["HARD"], st.session_state.structured_data["Skills"]["SOFT"]),
                 "Repetition Checker": lambda: repetition("\n".join(st.session_state.structured_data["Description"])),
-                "Verb Tense Checker": lambda: verb_tense("\n".join(st.session_state.structured_data["Description"])),
                 "Responsibility In Words Checker": lambda: reponsibility("\n".join(st.session_state.structured_data["Description"])),
                 "Spelling Checker": lambda: spelling_checker("\n".join(st.session_state.structured_data["Description"]))
             }
@@ -225,7 +224,7 @@ def main():
             pdf_list = [
                 "Bullet Point Length", "Bullet Points Improver", "Quantification Checker",
                 "Weak Verb Checker", "Repetition Checker", "Verb Tense Checker",
-                "Responsibility In Words Checker", "Personal Info"
+                "Responsibility In Words Checker", 
             ]
 
             show_dict = {
@@ -233,7 +232,6 @@ def main():
                 "Bullet Point Length": show_big_bullet_points,
                 "Total Bullet Points": show_box_brevity,
                 "Bullet Points Improver": show_bullet_point_improver,
-                "Personal Info": show_personal_info,
                 "Section Checker": show_personal_info,
                 "Skill Checker": show_skill_checker,
                 "Repetition Checker": show_repetition,

@@ -3,7 +3,7 @@ import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from agent import *
 import json
-
+import streamlit as st
 def personal_info(personal_info):
     personal_info_prompt = """
     You are analyzing Personal Information data from a resume. Your tasks are:
@@ -39,6 +39,7 @@ def personal_info(personal_info):
     return json_file
 
 def section_checker(sections):
+    
     section_checker = """
    You are an experienced HR professional at a Fortune 500 company, renowned for your expertise in resume evaluation. Your task is to analyze the sections of a resume for completeness and relevance.
     Given a list of sections from a resume, you will:
@@ -50,9 +51,11 @@ def section_checker(sections):
 
     Contact Information
     Professional Summary or Objective
-    Work Experience
+    Work Experience or Projects 
     Education
     Skills
+    Extra-curriculars
+    Coursework
     (Optional but often valuable) Achievements or Projects
 
     If you find irrelevant sections or notice missing critical sections, provide your analysis in a JSON format as follows:
@@ -77,11 +80,32 @@ def section_checker(sections):
 
 def skill_checker(hard_skills,soft_skills,profile="Full Stack Web Development"):
     skill_checker = """
-    YOU are HR of a FORTUNE 500 Company who is very good at judging the RESUME.
-    You will be provided with Skills of a person from a RESUME for profile if {}.
-    You have to judge both the HARD SKills and SOFT Skills and suggest other HARD and SOFT SKills that can be added in the RESUME to increase IMPACT of RESUME for the said profile
-    output a json object starting with '```json' and trailing with '```' containing key as "HARD" with value a list of new hard skill that can be added for the given profile, and another key "SOFT" with value a list of new soft skill that can be added for the given profile
-    """.format(profile)
+    ## HR Resume Evaluation Task
+
+    ### Instructions:
+
+    - **Role:** You are the HR of a Fortune 500 company, renowned for your expertise in evaluating resumes.
+    - **Task:** You will be provided with a list of skills from a candidate's resume.
+    - **Objective:** Assess both the hard skills and soft skills, and suggest additional skills to enhance the impact of the resume for the specified profile.
+
+    ### Output Format:
+
+    - Provide your output as a JSON object.
+    - The JSON object should start with ```json and end with ```.
+
+    ### JSON Structure:
+
+    - **Key:** `"HARD"` with a value of a list of new hard skills that can be added for the given profile.
+    - **Key:** `"SOFT"` with a value of a list of new soft skills that can be added for the given profile.
+
+    ### Example:
+
+    ```json
+    {
+    "HARD": ["Skill1", "Skill2", "Skill3"],
+    "SOFT": ["SkillA", "SkillB", "SkillC"]
+    }
+    """.strip()
 
     skill_checker_bot = Agent(skill_checker)
     skill_checker_resp = skill_checker_bot("HARD SKILLS"+ str(hard_skills)+ "SOFT SKILLS"+str(soft_skills))
