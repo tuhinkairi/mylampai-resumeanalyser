@@ -6,11 +6,11 @@ import base64
 from streamlit_pdf_viewer import pdf_viewer
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from llm_reviewer.agent import *
-from llm_reviewer.brevity import *
-from llm_reviewer.style import *
-from llm_reviewer.impact import *
-from utils.utils import *
+from app.llm_reviewer.agent import *
+from app.llm_reviewer.brevity import *
+from app.llm_reviewer.style import *
+from app.llm_reviewer.impact import *
+from app.utils.utils import *
 import streamlit as st
 from streamlit_pdf_viewer import pdf_viewer
 from streamlit_utils.custom_background import Background
@@ -217,7 +217,7 @@ def main():
                 "Section Checker": lambda: section_checker(st.session_state.structured_data["Sections"]),
                 "Skill Checker": lambda: skill_checker(st.session_state.structured_data["Skills"]["HARD"], st.session_state.structured_data["Skills"]["SOFT"]),
                 "Repetition Checker": lambda: repetition("\n".join(st.session_state.structured_data["Description"])),
-                "Responsibility In Words Checker": lambda: reponsibility("\n".join(st.session_state.structured_data["Description"])),
+                "Responsibility In Words Checker": lambda: responsibility("\n".join(st.session_state.structured_data["Description"])),
                 "Spelling Checker": lambda: spelling_checker("\n".join(st.session_state.structured_data["Description"]))
             }
 
