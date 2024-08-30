@@ -1,6 +1,6 @@
 import streamlit as st
 import PyPDF2
-from agent import *
+from llm_reviewer.agent import *
 import json
 import sys
 import os
@@ -21,26 +21,28 @@ def extract_text_from_pdf(pdf_file):
 
 def extract_structured_data(text):
     structured_prompt_2 = """
-    Read the following CV text 100 times, deeply understand it and than Convert the following CV text into a JSON data structure with the following keys and specifications:
+   Read the following CV text 100 times and deeply understand it. Then, convert the CV text into a JSON data structure with the following keys and specifications:
 
-    1. "Personal Information": The value should be a dictionary containing all personal information related to the individual given in the CV text (e.g., name, contact details, location,Date of Birth, Gender).
-
-    2. "Description": The value should be a A list of all bullet points found anywhere in the CV, including but not limited to:
+    1. "Personal Information": The value should be a dictionary containing all personal information related to the individual given in the CV text (e.g., name, contact details, location, date of birth, gender).
+    2. "Description": The value should be a list of all bullet points found anywhere in the CV, including but not limited to:
         - Achievements
         - Awards
-        - International Exposure
-        - Work Experience responsibilities
+        - International exposure
+        - Work experience responsibilities
         - Project details
         - Any other bullet-pointed information throughout the CV
-        
-    3. "Skills": The value should be a dictionary with Sub-Keys:-
-        a. "HARD" (technical skills, tools, programming languages, etc.) : Value should be a list of all HARD SKILL from RESUME
-        b. "SOFT"  (communication, leadership, etc.). Each skill should be listed individually : Value should be a list of all SOFT SKILL from RESUME.
+
+    3. "Skills": The value should be a dictionary with the following sub-keys:
+        "HARD" (technical skills, tools, programming languages, etc.): The value should be a list of all HARD SKILLS from the CV.
+        "SOFT" (communication, leadership, etc.): The value should be a list of all SOFT SKILLS from the CV. Each skill should be listed individually.
+
     4. "Education": The value should be a list of dictionaries, each containing information about educational qualifications (degree, institution, year, etc.).
     5. "Sections": The value should be a list of all distinct section headings actually present in the CV. This may include, but is not limited to: "Profile Summary", "Education", "Work Experience", "Skills", "Projects", "Achievements", "Awards", "International Exposure", "Extra Curricular Activities", "Languages", "Interests", etc. Only include sections that are explicitly mentioned as headings in the CV.
-    6. Finally check the whole CV data and JSON Structure, if there is anything MISSING, ADD it.
-    The Final Output Should start with '```json' and trailing with '```'.
-    """.strip()
+
+    Finally, check the whole CV data and JSON structure. If there is anything missing, add it.
+    The final output should start with '```json' and end with '```'.
+    Additionally, please ensure that the JSON structure is valid and accurately represents the information in the CV text.
+        """.strip()
     bot2 = Agent(structured_prompt_2)
     res = bot2(text)
     text_to = res.strip().strip('```').strip('```json')

@@ -11,7 +11,7 @@ def quantification(text_to_check):
     Step #1: Objective
     - Categorize the given bullet points as "Quantify" or "Not Quantify".
     - Output the result as a JSON object starting with '```json' and ending with '```'.
-    - The JSON object should have two keys: "Quantify" and "Not Quantify", each containing a list of appropriately categorized bullet points.
+    - The JSON object should have two keys:"Quantify" and "Not Quantify", each containing a list of appropriately categorized bullet points.
 
     Step #2: Instructions
     - Carefully analyze each bullet point, ensuring a thorough understanding of its content.
@@ -41,11 +41,18 @@ def quantification(text_to_check):
     bot_quatify = Agent(quantify_prompt)
     bot_quatify_resp = bot_quatify(str(text_to_check))
     json_file = json.loads(bot_quatify_resp.strip().strip("```json").strip("```"))
-    quant = json_file['Quantify']
-    nquant = json_file['Not Quantify']
+    quant_weight = 2  # You can adjust this weight based on importance
+    nquant_weight = 1 
+    quant_score = len(json_file['Quantify']) * quant_weight
+    nquant_score = len(json_file['Not Quantify']) * nquant_weight
+    total_points = quant_score+nquant_score
+    max_possible_score = (total_points * quant_weight) + (total_points * nquant_weight)
+    final_score = int((quant_score + nquant_score) / max_possible_score * 100)
+    json_file["score"] = final_score
     return json_file
 
-def repetition(text_to_check):
+
+def repetition(text_to_check,length):
 
     repetition_prompt = """
     ### TASK ###
@@ -79,7 +86,13 @@ def repetition(text_to_check):
     repeat_bot = Agent(repetition_prompt)
     repeat_bot_resp = repeat_bot(text_to_check)
     json_file = json.loads(repeat_bot_resp.strip().strip("```json").strip("```"))
+    total_points = length
+    good_points = total_points - len(json_file.keys())
+    score = int((good_points/total_points) *100)
+    json_file["score"] = score
     return json_file
+
+
 
 def weak_verb_checker(text_to_check):
     weak_verbs_prompt = """
@@ -144,6 +157,9 @@ def weak_verb_checker(text_to_check):
     json_file = json.loads(weak_verbs_bot_resp.strip().strip("```json").strip("```"))
     return json_file
 
+if __name__ == "__main__":
+    result = repetition(str(["This is me Anish Kumar","THis is the best quest","My resume is good","I helped 1000 people","My name is Anish Kumar"]),5)
+    print(result)
 def verb_tense(text_to_check):
     verb_tense_prompt = """
     ### CONTEXT ###
@@ -182,8 +198,7 @@ def verb_tense(text_to_check):
         return json_file
     return {"Result":"NO CORRECTION NEEDED"}
 
-def reponsibility(text_to_check):
-
+def responsibility(text_to_check):
     responsibility_prompt = """
     ### CONTEXT ###
     Hiring managers seek specific, impactful language in resumes. Many job seekers unknowingly use generic or overused phrases that can negatively impact their candidacy. Additionally, even without these clichés, some bullet points may still benefit from optimization to better showcase a candidate's value.

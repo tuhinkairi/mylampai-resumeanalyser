@@ -8,30 +8,30 @@ def personal_info(personal_info):
     personal_info_prompt = """
     You are analyzing Personal Information data from a resume. Your tasks are:
 
-Remove any key-value pairs where the value is null.
-Verify the presence of essential resume elements:
+    Remove any key-value pairs where the value is null.
+    Verify the presence of essential resume elements:
 
-Full name
-Location (city and/or state)
-Key contact details (email address, phone number)
-Professional profile links (LinkedIn, GitHub, or other relevant profiles)
+    Full name
+    Location (city and/or state)
+    Key contact details (email address, phone number)
+    Professional profile links (LinkedIn, GitHub, or other relevant profiles)
 
 
-Identify any irrelevant or potentially problematic personal information.
+    Identify any irrelevant or potentially problematic personal information.
 
-If you find irrelevant or problematic information, output a JSON object with this structure:
-{
-  irrelevant_item: "Reason why this is irrelevant or problematic"
-}
-Examples of irrelevant or problematic information might include:
+    If you find irrelevant or problematic information, output a JSON object with this structure:
+    {
+    irrelevant_item: "Reason why this is irrelevant or problematic"
+    }
+    Examples of irrelevant or problematic information might include:
 
-Sensitive personal details (e.g., age, marital status, religion)
-Excessive or unnecessary information
-Outdated contact methods
+    Sensitive personal details (e.g., age, marital status, religion)
+    Excessive or unnecessary information
+    Outdated contact methods
 
-If no irrelevant information is found, return an empty JSON object:
-{}
-Ensure your response begins with "```json" and ends with "```" to properly format the JSON output.
+    If no irrelevant information is found, return an empty JSON object:
+    {}
+    Ensure your response begins with "```json" and ends with "```" to properly format the JSON output.
     """.strip()
     personal_info_checker = Agent(personal_info_prompt)
     personal_info_resp = personal_info_checker(str(personal_info))
@@ -69,7 +69,7 @@ def section_checker(sections):
         {}
     Ensure your response begins with "```json" and ends with "```" to properly format the JSON output.
     Remember, your goal is to ensure the resume sections are professional, relevant, and complete for a competitive job market.
-        """.strip()
+    """.strip()
     section_checker = Agent(section_checker)
     section_resp = section_checker(str(sections))
     json_file = json.loads(section_resp.strip().strip('```json').strip('```'))

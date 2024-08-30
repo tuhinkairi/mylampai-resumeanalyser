@@ -7,6 +7,7 @@ def resume_length(text, experience = "FRESHERS"):
 
     length = len(text)
     result = ""
+    score = 0
     if experience=="FRESHERS":
         if length>450 and length<850:
             result = "This is Good Length For Your Resume"
@@ -25,6 +26,7 @@ def total_bullet_list(text_list, experience = "FRESHERS"):
     else:
         result = "This could contain more bullet points"
     return {"Result":result}
+
 
 def bullet_points_improver(text_to_check):
     improver_prompt = """
@@ -46,8 +48,9 @@ def bullet_points_improver(text_to_check):
     - Ensure relevance to the job or industry
 
     Provide your analysis in a JSON format as follows:
-
+    Based on your analysis of everything, judge and provide a score between (0-100).Reach the score with proper reason and analysis. 
     {
+    "score":<integer_score>,
     "bulletPoints": [
         {
         "original": "Original weak bullet point text",
