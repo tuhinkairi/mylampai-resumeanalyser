@@ -12,3 +12,4 @@ uvicorn
 streamlit-pdf-viewer
 pymongo
 openai
+python-multipart
