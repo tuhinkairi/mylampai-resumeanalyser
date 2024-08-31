@@ -122,7 +122,10 @@ async def calculate_score(cv_text:TextInput, job_text : TextInputJob):
 @app.post("/extract_structured_data")
 async def extract_data(input: TextInput):
     try:
-        return {"message": extract_structured_data(clean_text(input.cv_text))}
+        logger.info(f"Original text: {input.cv_text}")
+        cleaned_text = clean_text(input.cv_text)
+        logger.info(f"Cleaned text: {cleaned_text}")
+        return {"message": extract_structured_data(cleaned_text)}
     except Exception as e:
         logger.error(f"Error extracting structured data: {e}")
         raise HTTPException(status_code=500, detail="Error extracting structured data")
