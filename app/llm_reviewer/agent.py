@@ -31,10 +31,9 @@ AZURE_OPENAI_ENDPOINT="https://cvmaker1.openai.azure.com/"
 #         client = AzureOpenAI(
 #             api_key=self.api_key,
 #             api_version="2024-02-01",
-#             azure_endpoint=self.endpoint
+#             azure_endpoint=self.endpoint,
+            
 #         )
-        
-        
 #         messages = []
 #         for msg in self.messages:
 #             if isinstance(msg, SystemMessage):
@@ -66,7 +65,9 @@ class Agent:
         return result
 
     def execute(self):
-        model = ChatGoogleGenerativeAI(model="gemini-1.5-pro",api_key="AIzaSyB1_1Bo1cJLly3FDe9mAEUjLOn2c1Tzr_k")
+        model = ChatGoogleGenerativeAI(model="gemini-1.5-pro",api_key="AIzaSyAY8U8Asc0ccXyF2_EI2ctM1K6f422fUbY",max_output_tokens=2048)
+        
+        
         messages = []
         for msg in self.messages:
             if isinstance(msg, SystemMessage):
