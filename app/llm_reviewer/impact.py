@@ -54,11 +54,12 @@ from spacy.matcher import Matcher
 
 
 def quantification(text_to_check):
+    print(text_to_check)
     nlp = spacy.load("en_core_web_sm")
     matcher = Matcher(nlp.vocab)
     
     # Define a pattern that matches any token that is a digit or contains a digit
-    pattern = [{"TEXT": {"REGEX": r"\b\d+(\.\d+)?\b"}}]
+    pattern = [{"TEXT": {"REGEX": r"\b(\d+(\.\d+)?(/\d+)?%?|rs\.?|Rs\.?|yen|¥|\$|€|£)\d+\b"}}]
     matcher.add("QUANTIFY", [pattern])
     
     quantify = []
@@ -180,7 +181,7 @@ def weak_verb_checker(text_to_check):
     weak_verbs_bot_resp = weak_verbs_bot(text_to_check)
     json_file = json.loads(weak_verbs_bot_resp.strip().strip("```json").strip("```"))
     return json_file
-
+    
 
 
 def responsibility(text_to_check):
@@ -282,7 +283,6 @@ def text_analyzer(text_to_check):
 
 
 
-
 def spelling_checker(text_to_check):
     spelling_checker_prompt = """
     1. Analyze the input text for spelling errors using a comprehensive dictionary and context-aware spell-checking algorithm.
@@ -334,7 +334,6 @@ def spelling_checker(text_to_check):
     score = max(0, 100 - (misspellings * 5))
     json_file["Score"] = score
     return json_file
-
 
 def verb_tense(text_to_check):
     verb_tense_prompt = """
