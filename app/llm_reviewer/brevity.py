@@ -3,8 +3,8 @@ import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from agent import *
 import json
-def resume_length(text, experience = "FRESHERS"):
 
+def resume_length(text, experience = "FRESHERS"):
     length = len(text)
     result = ""
     score = 0
@@ -13,6 +13,8 @@ def resume_length(text, experience = "FRESHERS"):
             result = "This is Good Length For Your Resume"
         else:
             result =  "The Length could be little smaller"
+    else:
+        result = "This is Good Length For Your Resume"
     return {"Result":result} 
 
 def bullet_point_length(text_list):

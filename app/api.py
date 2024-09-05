@@ -58,6 +58,10 @@ class TextInputJob(BaseModel):
 class DictInput(BaseModel):
     extracted_data: Dict[str, Any]
 
+class StyleInput(BaseModel):
+    extracted_data: Dict[str, Any]
+    profile:str =  "Full Stack Web Development"
+
 class SkillCheckerRequest(BaseModel):
     hard_skills: List[str]
     soft_skills: List[str]
@@ -82,8 +86,25 @@ async def summary_resume(cv_text:TextInput):
         logger.error(f"Error extracting Summary data: {e}")
         raise HTTPException(status_code=500, detail="Error extracting Summary data")
 
+@app.post("/style_check")
+async def style_check(data: StyleInput):
+    try:
+        resp = style_checker(data.extracted_data,data.profile)
+        return {"message":resp}
+    except Exception as e:
+        logger.error(f"Error extracting Style data: {e}")
+        raise HTTPException(status_code=500, detail="Error extracting Style data")
 
+@app.post("/spell_verb_checker")
+async def spell_verb_checker(data:DictInput):
+    try:
+        input = "\n".join(data.extracted_data["Description"])
+        return {"message": text_analyzer(input)}
+    except Exception as e:
+        logger.error(f"Error checking verb tense: {e}")
+        raise HTTPException(status_code=500, detail="Error checking verb tense")
 # Endpoint to extract text from PDF
+
 @app.post("/extract_text_from_pdf")
 async def extract_pdf_text(file: UploadFile = File(...)):
     try:
@@ -134,7 +155,7 @@ async def extract_data(input: TextInput):
 @app.post("/quantification")
 async def analyze_quantification(data:DictInput):
     try:
-        input = "\n".join(data.extracted_data["Description"])
+        input = data.extracted_data["Description"]
         return {"message": quantification(input)}
     except Exception as e:
         logger.error(f"Error analyzing quantification: {e}")

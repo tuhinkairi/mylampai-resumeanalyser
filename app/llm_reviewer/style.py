@@ -108,6 +108,67 @@ def skill_checker(hard_skills,soft_skills,profile="Full Stack Web Development"):
     """.strip()
 
     skill_checker_bot = Agent(skill_checker)
-    skill_checker_resp = skill_checker_bot("HARD SKILLS"+ str(hard_skills)+ "SOFT SKILLS"+str(soft_skills))
+    skill_checker_resp = skill_checker_bot("HARD SKILLS "+ str(hard_skills)+ " SOFT SKILLS "+str(soft_skills) + "\nPROFLE FOR JOB DESCTIPTION "+str(profile))
     json_file = json.loads(skill_checker_resp.strip().strip('```json').strip('```'))
+    return json_file
+
+def style_checker(cv_data, profile="Full Stack Web Development"):
+    one_style_prompt = """
+    ### INSTRUCTIONS
+    You are an experienced HR professional at a Fortune 500 company, renowned for your expertise in resume evaluation. Your task is to perform a thorough analysis of a candidate's resume, covering personal information, resume sections, and skills. Please follow these instructions carefully:
+    1. Personal Information Analysis
+        -> Analyze the personal information section of the resume:
+            Remove any key-value pairs where the value is null.
+            Verify the presence of essential resume elements.
+                Full name
+                Location (city and/or state)
+                Key contact details (email address, phone number)
+                Professional profile links (LinkedIn, GitHub, or other relevant profiles)
+        -> Identify any irrelevant or potentially problematic personal information, such as:
+                Sensitive personal details (e.g., age, marital status, religion)
+                Excessive or unnecessary information
+                Outdated contact methods
+    2. Resume Sections Analysis
+        ->Evaluate the sections of the resume for completeness and relevance:
+            Identify any irrelevant sections that don't belong in a professional resume.
+            Note any critical sections that are missing.
+        ->Essential sections typically include:
+            Contact Information
+            Professional Summary or Objective
+            Work Experience or Projects
+            Education
+            Skills
+            Extra-curriculars
+            Coursework
+            (Optional but often valuable) Achievements or Projects`
+    3. Skills Evaluation
+        Assess both the hard skills and soft skills presented in the resume:
+            Evaluate the relevance and completeness of the listed skills for the specified profile.
+            Suggest additional skills (both hard and soft) that could enhance the impact of the resume for the given profile.
+    ### OUTPUT
+    Provide your analysis in a JSON format starting with '``json' and trailing with '```' with the following structure:
+    ```json{
+            "personal_info": {
+                "irrelevant_items": {
+                "item1": "Reason why this is irrelevant or problematic",
+                "item2": "Reason why this is irrelevant or problematic"
+                }
+            },
+            "resume_sections": {
+                "irrelevant_sections": {
+                "Section Name": "Reason why this section is inappropriate or unnecessary"
+                },
+                "missing_sections": {
+                "Section Name": "Explanation of why this section is important and should be included"
+                }
+            },
+            "skills_evaluation": {
+                "HARD": ["Skill1", "Skill2", "Skill3"],
+                "SOFT": ["SkillA", "SkillB", "SkillC"]
+            }
+    }```
+    """.strip()
+    style_checker_bot = Agent(one_style_prompt)
+    style_checker_resp = style_checker_bot("STRUCTURED RESUME"+str(cv_data) + "\nPROFLE FOR JOB DESCTIPTION "+str(profile))
+    json_file = json.loads(style_checker_resp.strip().strip('```json').strip('```'))
     return json_file
