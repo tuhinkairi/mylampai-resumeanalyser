@@ -42,6 +42,18 @@ class SkillCheckerRequest(BaseModel):
     soft_skills: List[str]
     profile: str = "Full Stack Web Development"
 
+# Unified Request Model for Analysis
+
+class UnifiedAnalysisRequest(BaseModel):
+    action: str
+    points_to_check: List[str] = None
+    cv_text: str = None
+    hard_skills: List[str] = None
+    soft_skills: List[str] = None
+    profile: str = "Full Stack Web Development"
+    data: Dict[str, Any] = None
+    experience: str = "FRESHERS"
+
 # Endpoint to extract text from PDF
 @app.post("/extract_text_from_pdf")
 async def extract_pdf_text(file: UploadFile = File(...)):
@@ -192,3 +204,33 @@ async def check_skills(data, profile):
     except Exception as e:
         logger.error(f"Error checking skills: {e}")
         raise HTTPException(status_code=500, detail="Error checking skills")
+
+@app.post("/analyze")
+async def unified_analysis(request: UnifiedAnalysisRequest):
+    try:
+        # Action mapping
+        action_map = {
+            "quantification": lambda: quantification("\n".join(request.points_to_check or [])),
+            "repetition": lambda: repetition("\n".join(request.points_to_check or [])),
+            "weak_verb_checker": lambda: weak_verb_checker("\n".join(request.points_to_check or [])),
+            "verb_tense": lambda: verb_tense("\n".join(request.points_to_check or [])),
+            "responsibility": lambda: responsibility("\n".join(request.points_to_check or [])),
+            "spelling_checker": lambda: spelling_checker("\n".join(request.points_to_check or [])),
+            "resume_length": lambda: resume_length(request.cv_text, request.experience),
+            "bullet_point_length": lambda: bullet_point_length(request.points_to_check),
+            "total_bullet_list": lambda: total_bullet_list(request.cv_text.split("\n"), request.experience),
+            "bullet_points_improver": lambda: bullet_points_improver("\n".join(request.points_to_check or [])),
+            "personal_info": lambda: personal_info("\n".join(request.data.get("Personal Information", []))),
+            "section_checker": lambda: section_checker("\n".join(request.data.get("Sections", []))),
+            "skill_checker": lambda: skill_checker(request.hard_skills, request.soft_skills, request.profile),
+        }
+
+        if request.action not in action_map:
+            raise HTTPException(status_code=400, detail=f"Invalid action '{request.action}'.")
+
+        # Execute corresponding function
+        result = action_map[request.action]()
+        return {"message": result}
+    except Exception as e:
+        logger.error(f"Error performing analysis for action '{request.action}': {e}")
+        raise HTTPException(status_code=500, detail=f"Error performing analysis: {str(e)}")
