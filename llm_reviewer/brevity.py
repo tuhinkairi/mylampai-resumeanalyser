@@ -74,7 +74,7 @@ def bullet_points_improver(text_to_check):
     """.strip()
     bulletpoint_improver_bot = Agent(improver_prompt)
     bulletpoint_improver_bot_res = bulletpoint_improver_bot(text_to_check)
-    bulletpoint_improver_bot_res  = bulletpoint_improver_bot_res .strip().strip('```json').strip('```')
+    bulletpoint_improver_bot_res  = bulletpoint_improver_bot_res.strip().strip('```json').strip('```')
     json_file = json.loads(bulletpoint_improver_bot_res)
     return json_file
 
