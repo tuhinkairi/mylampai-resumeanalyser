@@ -3,17 +3,25 @@ import http.client
 import urllib.parse
 import json
 import requests
+from dotenv import load_dotenv
+import os
+
+# Load environment variables
+load_dotenv()
 
 # API Keys
-OPENROUTER_API_KEY = "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"
-OPEN_AI_KEY = ""
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+X_RAPIDAPI_KEY = os.getenv("X_RAPIDAPI_KEY")
+
+if not OPENROUTER_API_KEY or not X_RAPIDAPI_KEY:
+    raise ValueError("Missing API keys. Please add them to your .env file.")
 
 # Functions
 def get_linkedin_user_details(linkedin_url):
     encoded_url = urllib.parse.quote(linkedin_url, safe='')
     conn = http.client.HTTPSConnection("fresh-linkedin-profile-data.p.rapidapi.com")
     headers = {
-        'X-RapidAPI-Key': "f51b4efdc3mshe0f49f00da66748p1afa3ajsn7e4fd3128ea4",
+        'X-RapidAPI-Key': X_RAPIDAPI_KEY,
         'X-RapidAPI-Host': "fresh-linkedin-profile-data.p.rapidapi.com"
     }
     conn.request("GET", f"/get-linkedin-profile?linkedin_url={encoded_url}&include_skills=false", headers=headers)
@@ -25,7 +33,7 @@ def get_linkedin_posts(linkedin_url):
     encoded_url = urllib.parse.quote(linkedin_url, safe='')
     conn = http.client.HTTPSConnection("fresh-linkedin-profile-data.p.rapidapi.com")
     headers = {
-        'X-RapidAPI-Key': "f51b4efdc3mshe0f49f00da66748p1afa3ajsn7e4fd3128ea4",
+        'X-RapidAPI-Key': X_RAPIDAPI_KEY,
         'X-RapidAPI-Host': "fresh-linkedin-profile-data.p.rapidapi.com"
     }
     conn.request("GET", f"/get-profile-posts?linkedin_url={encoded_url}&type=posts", headers=headers)
@@ -36,9 +44,6 @@ def get_linkedin_posts(linkedin_url):
 def generate_text(prompt):
     headers = {
         "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-        "x-api-key": f"{OPEN_AI_KEY}",
-        "Referer": "YOUR_SITE_URL",
-        "X-Title": "YOUR_APP_NAME",
         "Content-Type": "application/json"
     }
     data = {
