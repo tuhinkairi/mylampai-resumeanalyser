@@ -1,4 +1,0 @@
-requests
-streamlit
-beautifulsoup4
-pandas
