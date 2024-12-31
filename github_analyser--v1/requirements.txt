@@ -1,8 +1,11 @@
 fastapi
 uvicorn
-pydantic
+requests
+streamlit
+beautifulsoup4
+pandas
 python-dotenv
-PyPDF2
 google-generativeai
 langchain-google-genai
 langchain
+PyPDF2
