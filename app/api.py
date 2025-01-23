@@ -5,13 +5,13 @@ import io
 import logging
 import os
 import sys
-from app.llm_reviewer.agent import *
-from app.llm_reviewer.brevity import *
-from app.llm_reviewer.style import *
-from app.llm_reviewer.impact import *
-from app.llm_reviewer.jd import structure_jd,calculate_score_llm
-from app.utils.utils import *
-from app.llm_reviewer.summary_prompt import master_prompt
+# from llm_reviewer.agent import *
+from llm_reviewer.brevity import *
+from llm_reviewer.style import *
+from llm_reviewer.impact import *
+from llm_reviewer.jd import structure_jd,calculate_score_llm
+from utils.utils import *
+from llm_reviewer.summary_prompt import master_prompt
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -197,6 +197,7 @@ async def check_verb_tense(data: DictInput):
 async def analyze_responsibility(data: DictInput):
     try:
         input = "\n".join(data.extracted_data["Description"])
+        print(inout)
         return {"message": responsibility(input)}
     except Exception as e:
         logger.error(f"Error analyzing responsibility: {e}")

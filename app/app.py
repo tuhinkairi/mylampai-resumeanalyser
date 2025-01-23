@@ -6,11 +6,11 @@ import base64
 from streamlit_pdf_viewer import pdf_viewer
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from app.llm_reviewer.agent import *
-from app.llm_reviewer.brevity import *
-from app.llm_reviewer.style import *
-from app.llm_reviewer.impact import *
-from app.utils.utils import *
+# from llm_reviewer.agent import *
+from llm_reviewer.brevity import *
+from llm_reviewer.style import *
+from llm_reviewer.impact import *
+from utils.utils import *
 import streamlit as st
 from streamlit_pdf_viewer import pdf_viewer
 from streamlit_utils.custom_background import Background
